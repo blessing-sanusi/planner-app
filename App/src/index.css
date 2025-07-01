@@ -1,3 +1,19 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+@keyframes pulseStroke {
+  0%, 100% {
+    stroke-opacity: 0.15;
+    fill-opacity: 0.05;
+  }
+  50% {
+    stroke-opacity: 0.35;
+    fill-opacity: 0.15;
+  }
+}
+
+.pulse-svg {
+  animation: pulseStroke 4s ease-in-out infinite;
+}
