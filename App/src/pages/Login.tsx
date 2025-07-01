@@ -1,45 +1,31 @@
-import React, { useState } from 'react';
+// pages/Login.tsx
+import React from 'react';
+import AuthForm from '../components/AuthForm';
 
-export default function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // TODO: Add Supabase or backend login logic
-    console.log('Logging in with:', email, password);
-  };
-
+export default function LoginPage() {
   return (
-    <div className="flex items-center justify-center h-[80vh]">
-      <form onSubmit={handleSubmit} className="bg-white shadow-md rounded-lg px-8 pt-6 pb-8 w-full max-w-md">
-        <h2 className="text-2xl font-semibold mb-6 text-center">Planner Login</h2>
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-blue-50 flex items-center justify-center px-4">
+      <div className="max-w-4xl w-full grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+        {/* Left side: Welcome illustration or message */}
+        <div className="hidden md:flex flex-col items-start justify-center px-6">
+          <h1 className="text-4xl font-bold text-indigo-800 mb-4 leading-snug">
+            👋 Welcome to Your <br /> ABA Companion
+          </h1>
+          <p className="text-gray-600 text-lg">
+            Track client progress, manage sessions, and stay organized — all in one place.
+          </p>
+          <img
+            src="/aba-illustration.svg"
+            alt="Illustration"
+            className="mt-6 w-full max-w-xs drop-shadow-md"
+          />
+        </div>
 
-        <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="w-full px-4 py-2 mb-4 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-          required
-        />
-
-        <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-full px-4 py-2 mb-6 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-          required
-        />
-
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-200"
-        >
-          Sign In
-        </button>
-      </form>
+        {/* Right side: Auth form */}
+        <div className="bg-white shadow-xl rounded-3xl p-8 sm:p-10 border border-gray-200 w-full">
+          <AuthForm />
+        </div>
+      </div>
     </div>
   );
 }
