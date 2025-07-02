@@ -33,7 +33,7 @@ export default function UpcomingSessionsCard() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3 text-indigo-700">
-          <FaUserClock className="text-xl" />
+          {/* <FaUserClock className="text-xl" /> */}
           <h2 className="text-xl font-semibold text-gray-800">Upcoming Sessions</h2>
         </div>
         <div className="space-x-2">

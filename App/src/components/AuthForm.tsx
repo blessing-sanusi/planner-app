@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 
 export default function AuthForm() {
+  const navigate = useNavigate();
   const [mode, setMode] = useState<'login' | 'register'>('login');
   const [name, setName] = useState('');  // new state for name
   const [email, setEmail] = useState('');
@@ -27,6 +29,8 @@ export default function AuthForm() {
         // Login
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
+
+        navigate('/dashboard')
       } else {
         // Register - send name as user_metadata
         const { error } = await supabase.auth.signUp({
@@ -37,7 +41,7 @@ export default function AuthForm() {
           },
         });
         if (error) throw error;
-        alert('Registration successful! Please check your email to confirm.');
+        navigate('/dashboard');
       }
     } catch (error: any) {
       setError(error.message || 'Something went wrong.');

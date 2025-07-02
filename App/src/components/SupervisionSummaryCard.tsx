@@ -20,7 +20,7 @@ export default function SupervisionSummaryCard() {
     <div className="bg-white rounded-3xl shadow-md border border-gray-100 p-6 bg-gradient-to-tr from-blue-50 via-white to-blue-50 space-y-6">
       {/* Header */}
       <div className="flex items-center gap-2 text-blue-700">
-        <FaChartLine className="text-lg" />
+        {/* <FaChartLine className="text-lg" /> */}
         <h2 className="text-lg font-semibold text-gray-800">Supervision Summary</h2>
       </div>
 
@@ -32,7 +32,7 @@ export default function SupervisionSummaryCard() {
         </div>
         <div>
           <p className="font-medium text-gray-900 flex items-center gap-1">
-            Make-Up Needed <FaExclamationTriangle className="text-yellow-500 text-sm" />
+            Make-Up Needed 
           </p>
           <p className="text-red-600 font-semibold">1 hr</p>
         </div>
