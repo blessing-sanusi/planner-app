@@ -1,8 +1,32 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { supabase } from '../lib/supabase';
 import HIPAABanner from '../components/HIPAABanner';
 import AuthForm from '../components/AuthForm';
 
 export default function LoginPage() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Check if user already logged in
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session) {
+        navigate('/dashboard');
+      }
+    });
+
+    // Listen for auth state changes (login/logout)
+    const { data: listener } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session) {
+        navigate('/dashboard');
+      }
+    });
+
+    return () => {
+      listener.subscription.unsubscribe();
+    };
+  }, [navigate]);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-blue-50 flex items-center justify-center px-6 py-12">
       <div className="max-w-6xl w-full bg-white rounded-3xl shadow-lg border border-gray-200 grid grid-cols-1 md:grid-cols-2">
@@ -13,7 +37,7 @@ export default function LoginPage() {
           </h1>
           <div className="w-20 h-1 bg-indigo-400 rounded-full mb-6 mx-auto" />
           <p className="text-indigo-600 text-lg max-w-sm mb-10">
-            Track client progress, manage sessions, and stay organized — all in one place.
+            Easily track client progress, manage sessions, and stay organized — all in one place.
           </p>
 
           {/* Subtle illustration SVG */}
@@ -32,7 +56,7 @@ export default function LoginPage() {
           </svg>
         </div>
 
-        {/* Right side - form */}
+        {/* Right side - authentication form */}
         <div className="flex flex-col justify-center px-12 py-16 border-t md:border-t-0 md:border-l border-gray-200 max-w-md mx-auto">
           <AuthForm />
           <HIPAABanner />

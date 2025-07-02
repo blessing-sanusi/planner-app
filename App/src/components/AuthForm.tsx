@@ -1,9 +1,9 @@
-// components/AuthForm.tsx
 import React, { useState } from 'react';
-import axios from 'axios';
+import { supabase } from '../lib/supabase';
 
 export default function AuthForm() {
   const [mode, setMode] = useState<'login' | 'register'>('login');
+  const [name, setName] = useState('');  // new state for name
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -16,16 +16,35 @@ export default function AuthForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    try {
-      const endpoint = mode === 'login' ? '/login' : '/register';
-      const response = await axios.post(`http://localhost:8000${endpoint}`, null, {
-        params: { email, password },
-      });
-      localStorage.setItem('token', response.data.access_token);
-      window.location.href = '/dashboard';
-    } catch (err: any) {
-      setError(err.response?.data?.detail || 'Something went wrong.');
+
+    if (mode === 'register' && !name.trim()) {
+      setError('Please enter your name.');
+      return;
     }
+
+    try {
+      if (mode === 'login') {
+        // Login
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+      } else {
+        // Register - send name as user_metadata
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: { full_name: name },
+          },
+        });
+        if (error) throw error;
+        alert('Registration successful! Please check your email to confirm.');
+      }
+    } catch (error: any) {
+      setError(error.message || 'Something went wrong.');
+      return;
+    }
+
+    // Redirect or refresh handled outside this component or with a useEffect listener
   };
 
   return (
@@ -37,6 +56,22 @@ export default function AuthForm() {
       {error && <p className="text-red-600 text-sm">{error}</p>}
 
       <div className="space-y-4">
+        {mode === 'register' && (
+          <div>
+            <label htmlFor="name" className="block text-sm font-medium text-gray-600">
+              Full Name
+            </label>
+            <input
+              id="name"
+              type="text"
+              value={name}
+              required={mode === 'register'}
+              onChange={(e) => setName(e.target.value)}
+              className="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-indigo-500 focus:border-indigo-500 shadow-sm"
+            />
+          </div>
+        )}
+
         <div>
           <label htmlFor="email" className="block text-sm font-medium text-gray-600">
             Email
