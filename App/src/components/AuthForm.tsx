@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '../lib/supabase';
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+  updateProfile,
+} from 'firebase/auth';
+import { auth } from '../lib/firebase';
 
 export default function AuthForm() {
   const navigate = useNavigate();
@@ -15,15 +21,14 @@ export default function AuthForm() {
     setMode((prev) => (prev === 'login' ? 'register' : 'login'));
   };
 
-  // ✅ Automatically redirect if already logged in
+  // ✅ Redirect if already logged in
   useEffect(() => {
-    const checkSession = async () => {
-      const { data, error } = await supabase.auth.getSession();
-      if (data?.session) {
-        navigate('/dashboard');
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // navigate('/dashboard');
       }
-    };
-    checkSession();
+    });
+    return () => unsubscribe();
   }, [navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -31,28 +36,21 @@ export default function AuthForm() {
     setError('');
 
     if (mode === 'register' && !name.trim()) {
-      setError('Please enter your name.');
+      setError('Please enter your full name.');
       return;
     }
 
     try {
       if (mode === 'login') {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-        // Don't manually navigate here — let useEffect handle it
+        await signInWithEmailAndPassword(auth, email, password);
+        // Redirect happens automatically via onAuthStateChanged
       } else {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            data: { full_name: name },
-          },
-        });
-        if (error) throw error;
-       
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        await updateProfile(userCredential.user, { displayName: name });
+        // Redirect happens automatically via onAuthStateChanged
       }
-    } catch (error: any) {
-      setError(error.message || 'Something went wrong.');
+    } catch (err: any) {
+      setError(err.message || 'Something went wrong.');
     }
   };
 
@@ -74,9 +72,9 @@ export default function AuthForm() {
               id="name"
               type="text"
               value={name}
-              required
               onChange={(e) => setName(e.target.value)}
               className="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-indigo-500 focus:border-indigo-500 shadow-sm"
+              required
             />
           </div>
         )}
@@ -89,9 +87,9 @@ export default function AuthForm() {
             id="email"
             type="email"
             value={email}
-            required
             onChange={(e) => setEmail(e.target.value)}
             className="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-indigo-500 focus:border-indigo-500 shadow-sm"
+            required
           />
         </div>
 
@@ -103,9 +101,9 @@ export default function AuthForm() {
             id="password"
             type="password"
             value={password}
-            required
             onChange={(e) => setPassword(e.target.value)}
             className="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-indigo-500 focus:border-indigo-500 shadow-sm"
+            required
           />
         </div>
       </div>
@@ -119,11 +117,7 @@ export default function AuthForm() {
 
       <p className="text-sm text-gray-600 text-center">
         {mode === 'login' ? "Don't have an account?" : 'Already registered?'}{' '}
-        <button
-          onClick={toggleMode}
-          type="button"
-          className="text-indigo-600 font-semibold hover:underline"
-        >
+        <button onClick={toggleMode} type="button" className="text-indigo-600 font-semibold hover:underline">
           {mode === 'login' ? 'Create one' : 'Login instead'}
         </button>
       </p>

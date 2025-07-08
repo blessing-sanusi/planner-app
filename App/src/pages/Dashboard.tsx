@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '../lib/supabase';
+import { onAuthStateChanged, signOut  } from 'firebase/auth';
+import { auth } from '../lib/firebase';
 
 import SupervisionSummaryCard from '../components/SupervisionSummaryCard';
 import UpcomingSessionsCard from '../components/UpcomingSessionCard';
@@ -10,23 +11,28 @@ import ScheduleCalendar from '../components/ScheduleCalendar';
 export default function Dashboard() {
 const navigate = useNavigate();
   const [userName, setUserName] = useState<string>('');
+  const [selectedClient, setSelectedClient] = useState(null);
+
 
   useEffect(() => {
-    const session = supabase.auth.getSession().then(({ data }) => {
-      if (!data.session) {
-        navigate('/login');
+     const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        navigate('/');
       } else {
-        // Try to get user's full name from user_metadata
-        const name = data.session.user.user_metadata?.full_name || data.session.user.email || '';
-        setUserName(name);
+        // Use displayName if available, otherwise fallback to email
+        setUserName(user.displayName || user.email || 'User');
       }
     });
+
+    return () => unsubscribe(); // clean up on unmount
   }, [navigate]);
 
+
   const handleLogout = async () => {
-    await supabase.auth.signOut();
-    navigate('/login');
+    await signOut(auth);
+    navigate('/');
   };
+
 
   return (
     <main className="bg-gray-50 min-h-screen p-8 max-w-7xl mx-auto space-y-12">
@@ -63,6 +69,7 @@ const navigate = useNavigate();
         <div className="bg-white rounded-3xl shadow-md border border-gray-200 p-6">
           <ClientSummaryCard />
         </div>
+
       </section>
 
       {/* Calendar Section */}

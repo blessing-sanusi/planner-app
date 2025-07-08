@@ -1,3 +1,4 @@
+// File: components/ClientSummaryCard.tsx
 import React, { useState } from 'react';
 import ClientSlideOver from './ClientSlideOver';
 
@@ -45,7 +46,7 @@ export default function ClientSummaryCard() {
   };
 
   return (
-    <div className="bg-white rounded-3xl shadow-md border border-gray-200 p-8 flex flex-col">
+    <div className={cardClass}>
       <h2 className="text-2xl font-semibold text-gray-900 mb-6">Client Progress</h2>
 
       <ul className="divide-y divide-gray-100">
@@ -98,12 +99,11 @@ export default function ClientSummaryCard() {
                     Update Goal
                   </button>
                   <button
-                    onClick={() => setSelectedClient(client)}
+                    onClick={() => openModal('summary', client)}
                     className="mt-3 inline-flex items-center text-indigo-600 text-sm font-semibold hover:underline"
                   >
-                  View Summary
+                    View Summary
                   </button>
-
                 </div>
               </div>
             </li>

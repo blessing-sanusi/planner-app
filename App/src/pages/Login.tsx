@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '../lib/supabase';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '../lib/firebase';
+
 import HIPAABanner from '../components/HIPAABanner';
 import AuthForm from '../components/AuthForm';
 
@@ -8,23 +10,13 @@ export default function LoginPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check if user already logged in
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
         navigate('/dashboard');
       }
     });
 
-    // Listen for auth state changes (login/logout)
-    const { data: listener } = supabase.auth.onAuthStateChange((event, session) => {
-      if (session) {
-        navigate('/dashboard');
-      }
-    });
-
-    return () => {
-      listener.subscription.unsubscribe();
-    };
+    return () => unsubscribe(); // cleanup listener on unmount
   }, [navigate]);
 
   return (
