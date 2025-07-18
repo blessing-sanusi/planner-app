@@ -7,6 +7,7 @@ import SupervisionSummaryCard from '../components/SupervisionSummaryCard';
 import UpcomingSessionsCard from '../components/UpcomingSessionCard';
 import ClientSummaryCard from '../components/ClientSummaryCard';
 import ScheduleCalendar from '../components/ScheduleCalendar';
+import ClientTaskListCard from '../components/ClientTaskListCard';
 
 export default function Dashboard() {
 const navigate = useNavigate();
@@ -54,23 +55,23 @@ const navigate = useNavigate();
         </button>
       </header>
 
-      <section className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Supervision Summary - spans all columns on large screens */}
-        <div className="col-span-1 lg:col-span-3">
-          <SupervisionSummaryCard />
-        </div>
+        <div className="max-w-6xl mx-auto mb-8">
+    <SupervisionSummaryCard />
+      </div>
 
-        {/* Upcoming Sessions */}
-        <div className="bg-white rounded-3xl shadow-md border border-gray-200 p-6">
-          <UpcomingSessionsCard />
-        </div>
+  <section className="max-w-6xl mx-auto flex flex-col gap-8">
+  <div className="w-full bg-white rounded-3xl shadow-md border border-gray-200 p-6">
+    <UpcomingSessionsCard />
+  </div>
+  <div className="w-full bg-white rounded-3xl shadow-md border border-gray-200 p-6">
+    <ClientSummaryCard />
+  </div>
+  <div className="w-full bg-white rounded-3xl shadow-md border border-gray-200 p-6">
+    <ClientTaskListCard />
+  </div>
+</section>
 
-        {/* Client Progress */}
-        <div className="bg-white rounded-3xl shadow-md border border-gray-200 p-6">
-          <ClientSummaryCard />
-        </div>
 
-      </section>
 
       {/* Calendar Section */}
       <section className="bg-white rounded-3xl shadow-md border border-gray-200 p-6 max-w-6xl mx-auto">

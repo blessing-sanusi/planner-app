@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { FaUserClock } from 'react-icons/fa';
 
 const allSessions = [
   { date: 'Monday', time: '9:00 AM', client: 'Client A', tech: 'Jane (RBT)', type: 'Direct' },
@@ -29,14 +28,11 @@ export default function UpcomingSessionsCard() {
   const sessions = filter === 'All' ? allSessions : allSessions.filter(s => s.type === filter);
 
   return (
-    <div className="bg-white rounded-3xl shadow-md border border-gray-100 p-6 space-y-6 bg-gradient-to-tr from-indigo-50 via-white to-indigo-50">
+    <div className="bg-white rounded-3xl border border-gray-200 p-6 max-w-full">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3 text-indigo-700">
-          {/* <FaUserClock className="text-xl" /> */}
-          <h2 className="text-xl font-semibold text-gray-800">Upcoming Sessions</h2>
-        </div>
-        <div className="space-x-2">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-2xl font-semibold text-gray-900 mb-6">Upcoming Sessions</h2>
+        <div className="flex flex-wrap gap-2">
           {sessionTypes.map(type => (
             <button
               key={type}
@@ -54,20 +50,27 @@ export default function UpcomingSessionsCard() {
       </div>
 
       {/* Session List */}
-      <ul className="space-y-4 max-h-80 overflow-y-auto pr-1 text-sm">
+      <ul
+        className="max-h-[320px] overflow-y-auto pr-2"
+        aria-label="Upcoming client sessions"
+      >
         {sessions.map((s, idx) => (
           <li
             key={idx}
-            className="flex flex-col sm:flex-row justify-between items-start sm:items-center border border-gray-100 p-4 rounded-xl hover:bg-indigo-50 transition cursor-pointer"
+            className="flex items-center justify-between border-b border-gray-200 py-2 last:border-b-0 cursor-pointer hover:bg-indigo-50 transition"
+            tabIndex={0}
+            aria-label={`${s.client} session with ${s.tech} on ${s.date} at ${s.time}, type ${s.type}`}
           >
-            <div>
-              <p className="text-lg font-semibold text-gray-800">{s.client}</p>
-              <p className="text-sm text-gray-500">{s.tech}</p>
-              <span className={`mt-2 inline-block text-xs px-3 py-1 rounded-full font-medium ${typeColors[s.type]}`}>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:gap-4 min-w-0">
+              <p className="text-lg font-semibold text-gray-800 truncate min-w-[140px] max-w-[220px]">{s.client}</p>
+              <p className="text-sm text-gray-500 truncate max-w-[150px]">{s.tech}</p>
+              <span
+                className={`mt-1 sm:mt-0 inline-block text-xs px-2 py-1 rounded-full font-medium select-none ${typeColors[s.type]}`}
+              >
                 {typeIcons[s.type]} {s.type}
               </span>
             </div>
-            <div className="text-right text-sm text-gray-600 self-start sm:self-center">
+            <div className="text-sm text-gray-600 whitespace-nowrap text-right flex-shrink-0 min-w-[90px]">
               <p className="font-medium">{s.date}</p>
               <p className="text-xs">{s.time}</p>
             </div>
