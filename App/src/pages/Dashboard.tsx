@@ -60,13 +60,13 @@ const navigate = useNavigate();
       </div>
 
   <section className="max-w-6xl mx-auto flex flex-col gap-8">
-  <div className="w-full bg-white rounded-3xl shadow-md border border-gray-200 p-6">
+  <div className="w-full bg-white rounded-3xl shadow-md border border-gray-200 p-6 max-w-6xl mx-auto">
     <UpcomingSessionsCard />
   </div>
-  <div className="w-full bg-white rounded-3xl shadow-md border border-gray-200 p-6">
+  <div className="w-full bg-white rounded-3xl shadow-md border border-gray-200 p-6 max-w-6xl mx-auto">
     <ClientSummaryCard />
   </div>
-  <div className="w-full bg-white rounded-3xl shadow-md border border-gray-200 p-6">
+  <div className="w-full bg-white rounded-3xl shadow-md border border-gray-200 p-6 max-w-6xl mx-auto">
     <ClientTaskListCard />
   </div>
 </section>
@@ -75,12 +75,13 @@ const navigate = useNavigate();
 
       {/* Calendar Section */}
       <section className="bg-white rounded-3xl shadow-md border border-gray-200 p-6 max-w-6xl mx-auto">
-        <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
+        {/* <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
           🗓️ Supervision Calendar
-        </h2>
-        <div style={{ height: 500 }} className="rounded-lg overflow-hidden">
+        </h2> */}
+        <div className="rounded-lg overflow-hidden h-[500px] sm:h-[600px]">
           <ScheduleCalendar />
         </div>
+
       </section>
     </main>
   );

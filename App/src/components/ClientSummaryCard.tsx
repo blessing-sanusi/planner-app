@@ -1,14 +1,10 @@
-import React, { useState } from 'react';
-import ClientSlideOver from './ClientSlideOver';
-
-const clients = [
-  { name: 'Client A', goal: 'Requesting with PECS', mastered: 4, total: 8 },
-  { name: 'Client B', goal: 'Toileting Routine', mastered: 2, total: 5 },
-  { name: 'Client C', goal: 'Turn-taking with peers', mastered: 5, total: 6 },
-];
-
-const cardClass =
-  "bg-white rounded-3xl shadow-md border border-gray-200 p-8 flex flex-col";
+import React, { useState, useEffect } from 'react';
+import { collection, onSnapshot } from 'firebase/firestore';
+import { db } from '../lib/firebase';
+import AddClientModal from './ClientModals/AddClientModal';
+import AddNoteModal from './ClientModals/AddNoteModal';
+import UpdateGoalModal from './ClientModals/UpdateGoalModal';
+import ClientSummaryModal from './ClientModals/ClientSummaryModal';
 
 function getInitials(name: string) {
   return name
@@ -31,32 +27,39 @@ function getStatus(percent: number) {
 }
 
 export default function ClientSummaryCard() {
-  const [modal, setModal] = useState<'note' | 'goal' | 'summary' | null>(null);
+  const [clients, setClients] = useState<any[]>([]);
+  const [modal, setModal] = useState<'addClient' | 'note' | 'goal' | 'summary' | null>(null);
   const [selectedClient, setSelectedClient] = useState<any>(null);
 
-  const openModal = (type: 'note' | 'goal' | 'summary', client: any) => {
-    setSelectedClient(client);
-    setModal(type);
-  };
-
-  const closeModal = () => {
-    setModal(null);
-    setSelectedClient(null);
-  };
+  useEffect(() => {
+    const unsubscribe = onSnapshot(collection(db, 'clients'), (snapshot) => {
+      const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setClients(data);
+    });
+    return () => unsubscribe();
+  }, []);
 
   return (
-    <div className="bg-white rounded-3xl shadow-md border border-gray-200 p-8 flex flex-col">
-      <h2 className="text-2xl font-semibold text-gray-900 mb-6">Client Progress</h2>
+    <div className="bg-white rounded-3xl border border-gray-200 p-6 max-w-full">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-semibold text-gray-900">Client Progress</h2>
+        <button
+          onClick={() => setModal('addClient')}
+          className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+        >
+          + Add Client
+        </button>
+      </div>
 
-      <ul className="divide-y divide-gray-100">
-        {clients.map((client, idx) => {
-          const percent = (client.mastered / client.total) * 100;
+      <ul className="divide-y divide-gray-100 max-h-[400px] overflow-y-auto">
+        {clients.map((client) => {
+          const percent = client.total ? (client.mastered / client.total) * 100 : 0;
           const status = getStatus(percent);
 
           return (
             <li
-              key={idx}
-              className="py-6 flex flex-col sm:flex-row sm:items-start sm:gap-6 hover:bg-indigo-50 rounded-xl transition"
+              key={client.id}
+              className="py-6 flex flex-col sm:flex-row sm:items-start sm:gap-6 hover:bg-indigo-50 rounded-xl transition cursor-pointer"
             >
               <div className="w-14 h-14 rounded-full bg-indigo-600 text-white flex items-center justify-center font-semibold text-xl shadow-md mb-4 sm:mb-0">
                 {getInitials(client.name)}
@@ -72,7 +75,7 @@ export default function ClientSummaryCard() {
                   </span>
                 </div>
 
-                <p className="text-sm text-gray-600 italic">Goal: {client.goal}</p>
+                <p className="text-sm text-gray-600 italic">Goal: {client.goal || 'No goal set'}</p>
 
                 <div className="w-full bg-gray-200 rounded-full h-4 overflow-hidden shadow-inner">
                   <div
@@ -81,29 +84,37 @@ export default function ClientSummaryCard() {
                   />
                 </div>
                 <p className="text-xs text-gray-500">
-                  {client.mastered} of {client.total} goals mastered
+                  {client.mastered || 0} of {client.total || 0} goals mastered
                 </p>
 
                 <div className="flex gap-2 mt-2 flex-wrap">
                   <button
-                    onClick={() => openModal('note', client)}
+                    onClick={() => {
+                      setSelectedClient(client);
+                      setModal('note');
+                    }}
                     className="text-sm px-3 py-1 bg-indigo-100 text-indigo-700 font-medium rounded-lg hover:bg-indigo-200"
                   >
                     Add Note
                   </button>
                   <button
-                    onClick={() => openModal('goal', client)}
+                    onClick={() => {
+                      setSelectedClient(client);
+                      setModal('goal');
+                    }}
                     className="text-sm px-3 py-1 bg-yellow-100 text-yellow-800 font-medium rounded-lg hover:bg-yellow-200"
                   >
                     Update Goal
                   </button>
                   <button
-                    onClick={() => setSelectedClient(client)}
+                    onClick={() => {
+                      setSelectedClient(client);
+                      setModal('summary');
+                    }}
                     className="mt-3 inline-flex items-center text-indigo-600 text-sm font-semibold hover:underline"
                   >
-                  View Summary
+                    View Summary
                   </button>
-
                 </div>
               </div>
             </li>
@@ -111,59 +122,16 @@ export default function ClientSummaryCard() {
         })}
       </ul>
 
-      {/* Modal */}
-      {modal && selectedClient && (
-        <div className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl shadow-xl p-6 w-full max-w-md">
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
-              {modal === 'note' && 'Add Note'}
-              {modal === 'goal' && 'Update Goal'}
-              {modal === 'summary' && 'Client Summary'}
-            </h3>
-            <p className="text-sm text-gray-600 mb-4">
-              Client: <strong>{selectedClient.name}</strong>
-            </p>
-
-            {modal === 'note' && (
-              <textarea
-                rows={4}
-                placeholder="Write your note here..."
-                className="w-full border border-gray-300 rounded-lg p-2"
-              />
-            )}
-
-            {modal === 'goal' && (
-              <input
-                type="text"
-                placeholder="Update goal..."
-                defaultValue={selectedClient.goal}
-                className="w-full border border-gray-300 rounded-lg p-2"
-              />
-            )}
-
-            {modal === 'summary' && (
-              <p className="text-gray-700">
-                <strong>Goal:</strong> {selectedClient.goal} <br />
-                <strong>Mastered:</strong> {selectedClient.mastered} / {selectedClient.total}
-              </p>
-            )}
-
-            <div className="flex justify-end mt-6 gap-3">
-              <button
-                onClick={closeModal}
-                className="px-4 py-2 rounded-lg bg-gray-200 text-gray-800 hover:bg-gray-300"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={closeModal}
-                className="px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700"
-              >
-                Save
-              </button>
-            </div>
-          </div>
-        </div>
+      {/* Modals */}
+      {modal === 'addClient' && <AddClientModal onClose={() => setModal(null)} />}
+      {modal === 'note' && selectedClient && (
+        <AddNoteModal client={selectedClient} onClose={() => setModal(null)} />
+      )}
+      {modal === 'goal' && selectedClient && (
+        <UpdateGoalModal client={selectedClient} onClose={() => setModal(null)} />
+      )}
+      {modal === 'summary' && selectedClient && (
+        <ClientSummaryModal client={selectedClient} onClose={() => setModal(null)} />
       )}
     </div>
   );

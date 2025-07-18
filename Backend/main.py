@@ -6,6 +6,11 @@ from clients.routes import router as clients_router
 from tasks.routes import router as tasks_router
 from notes.routes import router as notes_router
 from schedule.routes import router as schedule_router
+from SupervisionSession import as 
+
+from dotenv import load_dotenv
+load_dotenv()
+
 
 app = FastAPI(title="Client Care Hub API")
 

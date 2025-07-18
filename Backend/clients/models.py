@@ -4,6 +4,6 @@ from typing import Optional
 class Client(BaseModel):
     id: Optional[str] = None
     name: str
-    dob: Optional[str] = None
-    notes: Optional[str] = None
-    createdAt: Optional[str] = None
+    goal: Optional[str] = ""
+    mastered: Optional[int] = 0
+    total: Optional[int] = 0
