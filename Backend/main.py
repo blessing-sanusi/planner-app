@@ -1,16 +1,16 @@
+import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from auth.routes import router as auth_router
 from clients.routes import router as clients_router
-from tasks.routes import router as tasks_router
+from task.routes import router as tasks_router
 from notes.routes import router as notes_router
 from schedule.routes import router as schedule_router
-from SupervisionSession import as 
+from supervision_sessions.routes import router as supervision_router
 
 from dotenv import load_dotenv
 load_dotenv()
-
 
 app = FastAPI(title="Client Care Hub API")
 
@@ -35,9 +35,14 @@ app.include_router(clients_router, prefix="/clients", tags=["clients"])
 app.include_router(tasks_router, prefix="/tasks", tags=["tasks"])
 app.include_router(notes_router, prefix="/notes", tags=["notes"])
 app.include_router(schedule_router, prefix="/schedule", tags=["schedule"])
+app.include_router(supervision_router, prefix="/sessions", tags=["Supervision"])
 
 # Root endpoint
 @app.get("/")
 async def root():
     return {"message": "Welcome to Client Care Hub API"}
 
+
+if __name__ == "__main__":
+    # Run app on port 8000 with auto reload for dev
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

@@ -4,3 +4,4 @@ firebase-admin
 pyjwt
 bcrypt
 python-multipart
+pydantic[email]

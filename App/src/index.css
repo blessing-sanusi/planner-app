@@ -17,3 +17,8 @@
 .pulse-svg {
   animation: pulseStroke 4s ease-in-out infinite;
 }
+
+
+.card {
+  @apply bg-white rounded-2xl shadow-md border border-gray-200 p-6;
+}

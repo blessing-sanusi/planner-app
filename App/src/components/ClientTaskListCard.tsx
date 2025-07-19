@@ -103,7 +103,7 @@ export default function ClientTaskListCard() {
     </h2>
 
     {/* Input area */}
-    <div className="flex flex-col sm:flex-row gap-6 mb-8 max-w-4xl">
+    <div className="flex flex-col sm:flex-row gap-6 mb-8">
       <input
         type="text"
         placeholder="Client name"
@@ -128,7 +128,7 @@ export default function ClientTaskListCard() {
     </div>
 
     {/* Tasks list */}
-    <ul className="space-y-6 max-w-4xl">
+    <ul className="space-y-6">
       {tasks.map((task) => (
         <li
           key={task.id}

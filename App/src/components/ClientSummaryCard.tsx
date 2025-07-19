@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { db } from '../lib/firebase';
-import AddClientModal from './ClientModals/AddClientModal';
-import AddNoteModal from './ClientModals/AddNoteModal';
-import UpdateGoalModal from './ClientModals/UpdateGoalModal';
-import ClientSummaryModal from './ClientModals/ClientSummaryModal';
+import AddClientModal from './Modals/AddClientModal';
+import AddNoteModal from './Modals/AddNoteModal';
+import UpdateGoalModal from './Modals/UpdateGoalModal';
+import ClientSummaryModal from './Modals/ClientSummaryModal';
 
 function getInitials(name: string) {
   return name

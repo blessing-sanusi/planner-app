@@ -10,7 +10,7 @@ class SupervisionSession(BaseModel):
     hours: float
     type: str  # e.g. "direct", "indirect", etc.
     notes: Optional[str] = ""
-    isMakeup: bool = False
+    makeupNeeded: Optional[bool] = False
 
 class SupervisionSessionResponse(SupervisionSession):
     id: str

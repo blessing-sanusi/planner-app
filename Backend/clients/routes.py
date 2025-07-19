@@ -9,7 +9,9 @@ router = APIRouter(prefix="/clients", tags=["clients"])
 def get_clients():
     try:
         docs = db.collection("clients").stream()
-        return [Client(id=doc.id, **doc.to_dict()) for doc in docs]
+        clients = [Client(id=doc.id, **doc.to_dict()) for doc in docs]
+        print(f"Fetched clients: {clients}")  # debug print
+        return clients
     except Exception as e:
         raise HTTPException(500, str(e))
 

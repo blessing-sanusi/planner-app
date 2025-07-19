@@ -1,12 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException
-from .models import UserRegister, UserLogin
+from .models import UserRegister, UserLogin, UserResponse
 from .service import create_user, authenticate_user
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
-@router.post("/register")
+@router.post("/register", response_model=UserResponse)
 async def register(data: UserRegister):
-    user = await create_user(data)
+    user = await create_user(data.email, data.password, data.full_name)
     return user
 
 @router.post("/login")
